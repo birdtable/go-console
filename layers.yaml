@@ -1,0 +1,77 @@
+# go-console's layer table: the one place its packages and what they may import are written.
+# ui is the terminal look, uitest the driver its screens are tested with and shell the quoter of a pasted line, so the table was three
+# rows, and measure, the pure measures of text and colour, is a fourth. Imports are checked by hand until a ticket adds the test that reads this table; the test
+# that held them in the source module was not moved. A row says what is meant, and a review holds
+# a change to it.
+#
+# ui's code names shell for one thing, HereDialect's answer, a shell.Dialect; ui's tests also name it,
+# to run its lines through a real sh, where a test may start a program.
+#
+# The two rows may each name the other because of the tests alone: ui's own tests drive its
+# screens with uitest, and uitest's tests drive one of ui's. Neither package's code imports the
+# other.
+#
+# ui names one package of ours, go-run/exit, whose words and codes an ending is read by; .golangci.yml's
+# ui-imports row holds it there.
+#
+# The file's shape is narrow: a comment line, a top-level key, a row's key with a quoted value
+# or [], and one list entry per line.
+module: github.com/birdtable/go-console
+
+layers:
+  - layer: look
+    packages:
+      - .
+    may:
+      - uitest
+      - shell
+      - measure
+    external:
+      - charm.land/bubbles/v2/help
+      - charm.land/bubbles/v2/key
+      - charm.land/bubbles/v2/table
+      - charm.land/bubbles/v2/viewport
+      - charm.land/bubbletea/v2
+      - charm.land/fang/v2
+      - charm.land/huh/v2
+      - charm.land/lipgloss/v2
+      - charm.land/lipgloss/v2/list
+      - charm.land/lipgloss/v2/table
+      - charm.land/lipgloss/v2/tree
+      - charm.land/log/v2
+      - github.com/charmbracelet/colorprofile
+      - github.com/charmbracelet/x/ansi
+      - github.com/charmbracelet/x/term
+      - github.com/dustin/go-humanize/english
+      - github.com/spf13/cobra
+      - github.com/spf13/pflag
+      - github.com/birdtable/go-run/exit
+    holds: "the terminal look: the brand, the lines, the banner, tables, forms, the pager, the live view, the wait and the ending"
+    why: "the one package of ours that links Charm, so a program that takes only the plumbing never downloads it, and each library it wraps is named here"
+  - layer: driver
+    packages:
+      - uitest
+    may:
+      - .
+    external:
+      - charm.land/bubbletea/v2
+      - github.com/charmbracelet/x/ansi
+      - github.com/charmbracelet/x/vt
+      - github.com/charmbracelet/x/xpty
+    holds: "a screen driven with keys, one message at a time, and its last frame compared with a golden; a program run at a pty, and the screen it draws read back"
+    why: "a test drives a bubbletea model and strips the frame's styling, and reads a program's screen through a terminal emulator at a Unix pty or a ConPTY, and needs nothing else of Charm"
+  - layer: quoter
+    packages:
+      - shell
+    may: []
+    external: []
+    holds: "an argument vector quoted as one line for POSIX sh, PowerShell or cmd, read back as the same vector, and the named refusals of what a dialect cannot carry"
+    why: "a leaf of the standard library alone, so the other libraries and the programs that quote a line for a person to paste take it with nothing else; ui offers a convenience on it and nothing more"
+  - layer: measures
+    packages:
+      - measure
+    may: []
+    external:
+      - github.com/charmbracelet/x/ansi
+    holds: "pure text and colour measures: a column padded to display cells, the WCAG 2.1 relative luminance of a colour and the contrast ratio of two"
+    why: "a leaf of the standard library and x/ansi's cell width, with no I/O, so a layer that must stay pure takes the measures without taking ui and its cobra, lipgloss and session code"

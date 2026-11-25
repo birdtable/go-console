@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "declined",
+  "what": "the plan was not applied",
+  "next": "",
+  "code": 6,
+  "changes": [],
+  "dry_run": true
+}

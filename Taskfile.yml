@@ -1,0 +1,155 @@
+# go-console's checks, in the three tiers every project's gate has (pre-commit, pre-push, release).
+# Run one with `go tool -modfile=tools/task.mod task <tier>`; each tool is pinned in tools/<tool>.mod
+# and built by go tool on first use, so nothing is installed on the machine.
+# A tier is a task whose members run together (deps:), each member with a timeout: on its cmds line. A member
+# waits only for one it needs; none of these needs another, so none waits. A tier's elapsed time is held to
+# its budget in budgets.yaml.
+version: "3"
+
+env:
+  GOWORK: "off"
+
+tasks:
+  default:
+    desc: list the tasks
+    cmds:
+      - go tool -modfile=tools/task.mod task --list
+
+  fmt:
+    desc: gofmt finds nothing to change
+    cmds:
+      - cmd: go tool gate fmt
+        timeout: 1m
+  build:
+    desc: go build for this system
+    cmds:
+      - cmd: go build ./...
+        timeout: 5m
+
+  vet:
+    desc: go vet for this system
+    cmds:
+      - cmd: go vet ./...
+        timeout: 5m
+
+  second-consumer:
+    desc: a second program, with other flag names and other closing words, is drawn by Execute
+    cmds:
+      - cmd: go test -run '^TestSecondConsumer' ./ui/
+        timeout: 5m
+
+  taskfile:
+    desc: Taskfile.yml calls Go, by go-testkit's taskfile check
+    cmds:
+      - cmd: go test -run '^TestTheTaskfileCallsGo$' ./internal/taskcheck/
+        timeout: 5m
+
+  vet-systems:
+    desc: go build and go vet for linux, darwin, windows and freebsd
+    cmds:
+      - for: [linux/amd64, darwin/arm64, windows/amd64, freebsd/amd64]
+        cmd: CGO_ENABLED=0 GOOS={{index (splitList "/" .ITEM) 0}} GOARCH={{index (splitList "/" .ITEM) 1}} go build ./... && CGO_ENABLED=0 GOOS={{index (splitList "/" .ITEM) 0}} GOARCH={{index (splitList "/" .ITEM) 1}} go vet ./...
+        timeout: 5m
+
+  lint:
+    desc: golangci-lint with .golangci.yml
+    cmds:
+      - cmd: go tool -modfile=tools/golangci-lint.mod golangci-lint run ./...
+        timeout: 10m
+
+  test:
+    desc: "every test, with the race detector, in a random order, judged by hatch tests: red on a failed test, on no test passed or skipped, and on any test skipped (pre-push and release both run it)"
+    cmds:
+      - cmd: go tool -modfile=tools/hatch.mod hatch tests --timeout 10m --red-when failed,none-ran,any-skipped --green-word green --red-word red {{if not .CACHED}}-count=1 -shuffle=on {{end}}-race ./...
+        timeout: 10m
+    env:
+      CGO_ENABLED: "1"
+
+  tidy:
+    desc: go.mod and go.sum are what go mod tidy leaves
+    cmds:
+      - cmd: go mod tidy -diff
+        timeout: 2m
+
+  size:
+    silent: true
+    desc: print the non-test Go lines of the module, and fail above the ceiling of 8200
+    cmds:
+      # The measure and its exclusions are tools/gate's: every *.go file git knows that is not
+      # *_test.go, outside tools/, ui/testdata and uitest/golden.
+      - cmd: go tool gate size 8200
+        timeout: 2m
+
+  api:
+    desc: "the exported surface against the last tag on each system, the three systems against each other, the marks, and the contract index (pre-push and release)"
+    # Three members that run side by side, each red by itself:
+    #   apigate is go-testkit's cmd/apigate: the head's surface on darwin, linux and windows, the three held to api/systems.txt, the
+    #   incompatible lines since the last tag held to api/breaks/<tag>.txt byte for byte, and api/marks.txt held to go doc.
+    #   marks is the one refusal apigate does not hold: a marked name whose doc says Experimental, until apigate holds it.
+    #   contract is api/contract.txt against the last tag's: a line taken back is listed in api/breaks/<tag>.contract.txt.
+    deps: [apigate, marks, contract]
+
+  apigate:
+    desc: go-testkit's API gate, from this module's top
+    cmds:
+      - cmd: go tool apigate
+        timeout: 5m
+
+  marks:
+    internal: true
+    desc: no name of api/marks.txt has a doc that says Experimental (apigate holds that it exists, not this)
+    cmds:
+      - cmd: go tool gate marks
+        timeout: 5m
+
+  contract:
+    internal: true
+    desc: api/contract.txt has every line the last tag's had, or the line is listed in api/breaks/<tag>.contract.txt
+    cmds:
+      - cmd: go tool gate contract
+        timeout: 5m
+
+  secrets:
+    desc: "gitleaks over the tree; the one allowance is *.sum files, for the generic-api-key rule only"
+    cmds:
+      - cmd: go tool -modfile=tools/gitleaks.mod gitleaks dir . --config .gitleaks.toml --no-banner
+        timeout: 10m
+
+  hooks:
+    desc: install the pre-push hook, once per clone
+    cmds:
+      - cmd: go tool gate hooks
+        timeout: 1m
+  verify:
+    desc: the module graph verified
+    cmds:
+      - cmd: go mod verify
+        timeout: 5m
+
+  help-pty:
+    desc: the pty help bound, which waits out two terminal queries nobody answers, and the 50-run exits-at-once stress
+    cmds:
+      # Each test it runs is held to a PASS line: go test says "ok" with "no tests to run" when the name
+      # matches nothing. Every host runs both tests, Windows too.
+      - cmd: go tool gate help-pty
+        timeout: 10m
+
+  pre-commit:
+    desc: the tier that runs on every commit, fast
+    cmds:
+      - cmd: go tool gate tier pre-commit fmt build vet secrets second-consumer taskfile
+        timeout: 30m
+
+  pre-push:
+    desc: the tier that runs on every push, and the only claim that counts as done
+    # A push lets go test reuse the result of a package whose files did not change, which
+    # -count=1 and -shuffle=on both prevent; the release tier and the group run keep -race -shuffle=on -count=1.
+    cmds:
+      - cmd: go tool gate tier pre-push fmt build vet secrets vet-systems lint test:CACHED=1 tidy size:8200 apigate marks contract
+        timeout: 30m
+
+  release:
+    desc: "the tier that runs on a tag: the pre-push members, the module graph verified, and the pty help bound"
+    cmds:
+      - cmd: go tool gate tier release fmt build vet secrets vet-systems lint test tidy size:8200 apigate marks contract verify help-pty
+        timeout: 30m

@@ -1,0 +1,6 @@
+  would file       box to shelf
+
+  Nothing was changed. To make these changes, type:
+    app put '--to=the shelf' 'a box' --apply
+
+  done       filed one box

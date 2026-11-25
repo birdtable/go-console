@@ -1,0 +1,5 @@
+name                    state    address     note
+alpha                   running  192.0.2.10  a note that runs on a while longer
+                                             than the rest
+beta                    stopped  192.0.2.11  short
+gamma-with-a-long-name  running  192.0.2.12  none

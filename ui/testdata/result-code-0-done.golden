@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "done",
+  "what": "ready",
+  "next": "",
+  "code": 0,
+  "changes": [],
+  "dry_run": true
+}

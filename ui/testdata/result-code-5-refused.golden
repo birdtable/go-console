@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "refused",
+  "what": "the folder is not one this tool made, so it will not touch it",
+  "next": "app init",
+  "code": 5,
+  "changes": [],
+  "dry_run": true
+}

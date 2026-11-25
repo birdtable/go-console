@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "failed",
+  "what": "the command stopped on an internal error",
+  "next": "app --help",
+  "code": 1,
+  "changes": [],
+  "dry_run": true,
+  "error": {
+    "kind": "failed",
+    "msg": "the command stopped on an internal error",
+    "hint": "app --help"
+  }
+}

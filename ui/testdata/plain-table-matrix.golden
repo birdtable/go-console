@@ -1,0 +1,168 @@
+== ascii at 0
+name                    state    address     note
+alpha                   running  192.0.2.10  a note that runs on a while longer than the rest
+beta                    stopped  192.0.2.11  short
+gamma-with-a-long-name  running  192.0.2.12  none
+== ascii at 20
+name
+alpha
+beta
+gamma-with-a-long-na
+me
+3 columns not shown:
+state, address, note
+== ascii at 40
+name                    state
+alpha                   running
+beta                    stopped
+gamma-with-a-long-name  running
+2 columns not shown: address, note
+== ascii at 60
+name                    state    address
+alpha                   running  192.0.2.10
+beta                    stopped  192.0.2.11
+gamma-with-a-long-name  running  192.0.2.12
+1 column not shown: note
+== ascii at 80
+name                    state    address     note
+alpha                   running  192.0.2.10  a note that runs on a while longer
+                                             than the rest
+beta                    stopped  192.0.2.11  short
+gamma-with-a-long-name  running  192.0.2.12  none
+== ascii at 120
+name                    state    address     note
+alpha                   running  192.0.2.10  a note that runs on a while longer than the rest
+beta                    stopped  192.0.2.11  short
+gamma-with-a-long-name  running  192.0.2.12  none
+== accents and emoji at 0
+name      state    address     note
+café      prêt     192.0.2.10  naïve résumé
+日本語    🚀 go    192.0.2.11  é combined
+zoë 🎉🎉  done ✅  ::1         ok
+== accents and emoji at 20
+name      state
+café      prêt
+日本語    🚀 go
+zoë 🎉🎉  done ✅
+2 columns not shown:
+address, note
+== accents and emoji at 40
+name      state    address
+café      prêt     192.0.2.10
+日本語    🚀 go    192.0.2.11
+zoë 🎉🎉  done ✅  ::1
+1 column not shown: note
+== accents and emoji at 60
+name      state    address     note
+café      prêt     192.0.2.10  naïve résumé
+日本語    🚀 go    192.0.2.11  é combined
+zoë 🎉🎉  done ✅  ::1         ok
+== accents and emoji at 80
+name      state    address     note
+café      prêt     192.0.2.10  naïve résumé
+日本語    🚀 go    192.0.2.11  é combined
+zoë 🎉🎉  done ✅  ::1         ok
+== accents and emoji at 120
+name      state    address     note
+café      prêt     192.0.2.10  naïve résumé
+日本語    🚀 go    192.0.2.11  é combined
+zoë 🎉🎉  done ✅  ::1         ok
+== short rows at 0
+name   state    address     note
+alpha
+beta   stopped
+gamma  running  192.0.2.12
+== short rows at 20
+name   state
+alpha
+beta   stopped
+gamma  running
+2 columns not shown:
+address, note
+== short rows at 40
+name   state    address     note
+alpha
+beta   stopped
+gamma  running  192.0.2.12
+== short rows at 60
+name   state    address     note
+alpha
+beta   stopped
+gamma  running  192.0.2.12
+== short rows at 80
+name   state    address     note
+alpha
+beta   stopped
+gamma  running  192.0.2.12
+== short rows at 120
+name   state    address     note
+alpha
+beta   stopped
+gamma  running  192.0.2.12
+== empty at 0
+name  state  address  note
+== empty at 20
+name  state  address
+1 column not shown:
+note
+== empty at 40
+name  state  address  note
+== empty at 60
+name  state  address  note
+== empty at 80
+name  state  address  note
+== empty at 120
+name  state  address  note
+== long cells at 0
+name                                                                                                                                                                                                      state                                                                                                                                                                                                     address                                                                                                                                                                                                   note
+a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on   a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on   a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on   a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on
+x                                                                                                                                                                                                         y                                                                                                                                                                                                         z                                                                                                                                                                                                         a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes on
+== long cells at 20
+name
+a long cell that
+goes on a long cell
+that goes on a long
+cell that goes on a
+long cell that goes
+on a long cell that
+goes on a long cell
+that goes on a long
+cell that goes on a
+long cell that goes
+on
+x
+3 columns not shown:
+state, address, note
+== long cells at 40
+name
+a long cell that goes on a long cell
+that goes on a long cell that goes on a
+long cell that goes on a long cell that
+goes on a long cell that goes on a long
+cell that goes on a long cell that goes
+on
+x
+3 columns not shown: state, address,
+note
+== long cells at 60
+name
+a long cell that goes on a long cell that goes on a long
+cell that goes on a long cell that goes on a long cell that
+goes on a long cell that goes on a long cell that goes on a
+long cell that goes on
+x
+3 columns not shown: state, address, note
+== long cells at 80
+name
+a long cell that goes on a long cell that goes on a long cell that goes on a
+long cell that goes on a long cell that goes on a long cell that goes on a long
+cell that goes on a long cell that goes on
+x
+3 columns not shown: state, address, note
+== long cells at 120
+name
+a long cell that goes on a long cell that goes on a long cell that goes on a long cell that goes
+on a long cell that goes on a long cell that goes on a long cell that goes on a long cell that
+goes on
+x
+3 columns not shown: state, address, note

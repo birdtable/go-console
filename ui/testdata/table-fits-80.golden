@@ -1,0 +1,4 @@
+name                    state
+alpha                   running
+beta                    stopped
+gamma-with-a-long-name  running

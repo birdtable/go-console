@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "failed",
+  "what": "the step did not work",
+  "next": "app logs",
+  "code": 1,
+  "changes": [],
+  "dry_run": true,
+  "error": {
+    "kind": "failed",
+    "msg": "the step did not work",
+    "hint": "app logs"
+  }
+}

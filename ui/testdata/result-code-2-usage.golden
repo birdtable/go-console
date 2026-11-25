@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "refused",
+  "what": "say which one",
+  "next": "app run --name x",
+  "code": 2,
+  "changes": [],
+  "dry_run": true
+}

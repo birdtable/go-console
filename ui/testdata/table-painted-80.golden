@@ -1,0 +1,5 @@
+[1mname[m                    [1mstate[m  
+[2m────────────────────────[m[2m───────[m
+alpha                   running
+beta                    stopped
+gamma-with-a-long-name  running

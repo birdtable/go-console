@@ -1,0 +1,18 @@
+name: Feature request
+description: Something you are trying to do with go-console that it does not let you do.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What you are trying to do
+      description: The task, and what stops you now. The API you want comes after.
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: The API you have in mind
+      description: Optional.
+    validations:
+      required: false

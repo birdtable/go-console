@@ -1,0 +1,459 @@
+# go-console's lint: a shared golangci-lint base for Go projects, with this
+# repo's own rows in the slots.
+#
+# Written by hand, never generated. Each linter and setting names the rule ids
+# it holds; each of those rules names this file in its check. golangci-lint v2,
+# pinned at 2.15.0. A project's .golangci.yml is generated from this file,
+# unchanged, and the project's own lint/project.yml: the "# slot <name> begin"
+# and "# slot <name> end" lines mark what a project may replace, and the project
+# file maps each slot's name to its text. Lines starting "# per-project:" name
+# paths that only a project knows (its runner, terminal module, adapters, paths
+# helper, layer table); a project fills them in its slots.
+version: "2"
+
+run:
+  tests: true
+
+issues:
+  # go.errors.4, gates.plants.10: no cap, so repeats are not hidden.
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # gates.plants.10: a second hit on one line still shows.
+  uniq-by-line: false
+
+linters:
+  default: standard # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - bodyclose # go.style.4
+    - contextcheck # go.concurrency.1
+    - depguard # cli.config.7, cli.process.1, cli.look.1, arch.shared.7, arch.ports.11, tests.doubles.2, go.style.5; arch.layers.2/5/7/9, arch.ports.1/2/8 per project
+    - dupl # code.duplication.1 (the within-package tripwire)
+    - errorlint # go.errors.2 (wrapcheck stays off, same rule)
+    - exhaustive # code.idioms.3
+    - exptostd # code.idioms.2
+    - forbidigo # go.errors.3, go.errors.4, go.concurrency.1, cli.config.3, cli.config.5, cli.errors.3, cli.output.2, cli.process.1, arch.ports.1, arch.ports.23, tests.admission.5, tests.isolation.6
+    - gochecknoglobals # arch.ports.12
+    - gochecknoinits # go.layout.2
+    - gocognit # code.size.3
+    - gocritic # code.comments.3
+    - gocyclo # code.idioms.4
+    - godoclint # code.comments.4
+    - gomoddirectives # go.layout.3
+    - gosec # cli.process.1, supply.scans.3 (every rule)
+    - iface # arch.ports.10
+    - interfacebloat # go.style.1
+    - modernize # code.idioms.2
+    - noctx # go.concurrency.1, go.style.4
+    - nolintlint # gates.exemptions.1, gates.exemptions.2
+    - paralleltest # go.cycle.2, tests.runners.4: a test calls t.Parallel, or says "// serial: <why>" on a nolint
+    - revive # code.idioms.1, code.naming.1, code.comments.4, code.size.4, go.errors.4, go.concurrency.2, arch.structure.7
+    - sloglint # go.logging.1, go.logging.2
+    - thelper # go.style.5
+    - tparallel # go.cycle.2, tests.runners.4: a test and its subtests agree on t.Parallel
+    - usestdlibvars # code.idioms.2
+  # per-project: sqlclosecheck and rowserrcheck where database/sql is imported (go.style.4).
+
+  settings:
+    depguard:
+      rules:
+        # cli.config.7: flag parsing lives in cmd/ and the command packages only.
+        cli-flags:
+          # slot cli-flags begin
+          files: ["$all", "!**/cmd/**", "!**/ui/**", "!**/uitest/**"]
+          # go-console: ui runs a program's cobra command tree, and its tests drive it.
+          # slot cli-flags end
+          deny:
+            - pkg: flag
+              desc: "cli.config.7: flags are parsed in cmd/ only"
+            - pkg: github.com/spf13/pflag
+              desc: "cli.config.7: flags are parsed in cmd/ only"
+            - pkg: github.com/spf13/cobra
+              desc: "cli.config.7: flags are parsed in cmd/ only"
+            - pkg: github.com/urfave/cli
+              desc: "cli.config.7: flags are parsed in cmd/ only"
+        # cli.process.1: only the runner starts programs.
+        owner-exec:
+          # slot owner-exec begin
+          files: ["$all", "!**/ui/**", "!**/uitest/**"]
+          # go-console: ui starts the pager and the commands a live view runs; its tests start the test binary.
+          # slot owner-exec end
+          deny:
+            - pkg: os/exec
+              desc: "cli.process.1: start programs through the runner"
+        # cli.look.1, arch.shared.7: terminal libraries only in the shared UI module.
+        owner-ui:
+          # slot owner-ui begin
+          files: ["$all", "!**/ui/**", "!**/uitest/**", "!**/measure/**"]
+          # go-console is the shared UI module; measure is its pure measures, which take x/ansi's cell width.
+          # slot owner-ui end
+          deny:
+            - pkg: golang.org/x/term
+              desc: "arch.shared.7: terminal detection belongs to the shared UI module"
+            - pkg: github.com/mattn/go-isatty
+              desc: "arch.shared.7: terminal detection belongs to the shared UI module"
+            - pkg: github.com/charmbracelet
+              desc: "cli.look.1: terminal styling belongs to the shared UI module"
+            - pkg: github.com/fatih/color
+              desc: "cli.look.1: terminal styling belongs to the shared UI module"
+            - pkg: github.com/muesli/termenv
+              desc: "cli.look.1: terminal styling belongs to the shared UI module"
+        # arch.ports.23: operating-system packages only in the host layer.
+        os-host:
+          # slot os-host begin
+          files: ["$all", "!**/ui/detect_windows*.go", "!**/ui/pagersplit_windows.go", "!**/ui/here_windows.go", "!**/ui/chain_darwin.go"]
+          # per-project: "!**/<host layer>/**"
+          # ui asks x/sys in three places, all the console's own call: the Windows code-page read
+          # the Windows split of $PAGER by DecomposeCommandLine, and the Windows read of the parent
+          # process chain by a toolhelp snapshot, and the macOS read of it by the kern.proc.pid
+          # sysctl.
+          # slot os-host end
+          deny:
+            - pkg: golang.org/x/sys
+              desc: "arch.ports.23: an operating-system package belongs to the host layer"
+            - pkg: github.com/gofrs/flock
+              desc: "arch.ports.23: an operating-system package belongs to the host layer"
+            - pkg: github.com/shirou/gopsutil
+              desc: "arch.ports.23: an operating-system package belongs to the host layer"
+        # per-project (go.logging.1, daemon kind only):
+        # no-std-log:
+        #   files: ["$all"]
+        #   deny:
+        #     - pkg: log
+        #       desc: "go.logging.1: log through the shared slog logger"
+        # per-project (arch.layers.2, arch.layers.5, arch.layers.7, arch.layers.9,
+        # arch.ports.1, arch.ports.2, arch.ports.8): the layer and port rows are
+        # rendered from the project's layer table, never written here.
+        # slot layer-rows begin
+        # go-console's layers.yaml, held in lint: ui's code takes the standard library, the Charm
+        # libraries, cobra and its pflag, go-humanize for a count's commas, and of ours only go-run/exit, go-console/measure and go-console/shell (HereDialect answers a shell.Dialect), so the look reads an
+        # ending by exit's words and codes and no other package of go-run reaches it.
+        ui-imports:
+          files: ["**/ui/**", "!$test"]
+          list-mode: strict
+          allow:
+            - $gostd
+            - charm.land
+            - github.com/charmbracelet
+            - github.com/dustin/go-humanize
+            - github.com/spf13/cobra
+            - github.com/spf13/pflag
+            - golang.org/x/sys/unix
+            - golang.org/x/sys/windows
+            - github.com/birdtable/go-console/measure
+            - github.com/birdtable/go-console/shell
+            - github.com/birdtable/go-console/ui
+            - github.com/birdtable/go-run/exit
+        # shell, the quoter of a pasted line, takes the standard library alone.
+        shell-imports:
+          files: ["**/shell/**", "!$test"]
+          list-mode: strict
+          allow:
+            - $gostd
+        # measure, the pure measures of text and colour, takes the standard library and the cell width of charmbracelet/x/ansi
+        # and does no I/O.
+        measure-imports:
+          files: ["**/measure/**", "!$test"]
+          list-mode: strict
+          allow:
+            - $gostd
+            - github.com/charmbracelet/x/ansi
+        # slot layer-rows end
+        # arch.shared.8: the ban on each shared primitive's import outside its
+        # owner is rendered from the project's shared registry, never written here.
+        # slot shared-imports begin
+        # go-console's rows of the register of libraries: each names the job, the library that does it, and the
+        # competing modules and hand-written copies that may not come back. A row stands only
+        # where no copy of its job is left in the tree. This file's own lint run is what holds them.
+        #
+        # cli-frame, forms-and-live-ui, log: the Charm modules, fang, bubbletea, bubbles, huh and
+        # log, are imported by ui and uitest alone. cmd/probe links fang beside ui on purpose, to
+        # show what fang does without it; the row goes with the probe.
+        register-charm-owner:
+          files: ["$all", "!**/ui/**", "!**/uitest/**", "!**/cmd/probe/**"]
+          deny:
+            - pkg: charm.land
+              desc: "register cli-frame, forms-and-live-ui, log: the Charm modules belong to ui and uitest"
+        # slot shared-imports end
+
+    dupl:
+      threshold: 60 # code.duplication.1
+
+    errcheck:
+      # go.errors.1, go.errors.3 (tests excluded below)
+      check-type-assertions: true
+      check-blank: true
+
+    exhaustive:
+      default-signifies-exhaustive: true # code.idioms.3 (tests excluded below)
+
+    forbidigo:
+      analyze-types: true # go.errors.3, go.concurrency.1, cli.config.3, cli.output.2, tests.isolation.6
+      forbid:
+        - pattern: ^panic$
+          msg: "go.errors.3: panic is for programmer errors; outside main and tests it needs an allow-list entry"
+        - pattern: ^os\.Exit$
+          msg: "go.errors.4: only main exits"
+        - pattern: ^log\.(Fatal|Fatalf|Fatalln)$
+          msg: "go.errors.4: only main exits"
+        - pattern: ^context\.(Background|TODO)$
+          msg: "go.concurrency.1: take the context from the caller"
+        - pattern: ^os\.(Getenv|LookupEnv|Environ)$
+          msg: "cli.config.3: read the environment in the config package"
+        - pattern: ^os\.(UserConfigDir|UserCacheDir|UserHomeDir)$
+          msg: "cli.config.5: folders come from the paths helper"
+        - pattern: ^fmt\.(Print|Printf|Println)$
+          msg: "cli.errors.3: write through the injected writer or the terminal module"
+        - pattern: ^os\.(Stdout|Stderr)$
+          msg: "cli.errors.3: write through the injected writer or the terminal module"
+        - pattern: ^json\.(NewEncoder|Marshal|MarshalIndent)$
+          pkg: ^encoding/json$
+          msg: "cli.output.2: JSON output is written by the root command only"
+        - pattern: ^os\.StartProcess$
+          msg: "cli.process.1: start programs through the runner"
+        - pattern: ^syscall\.(ForkExec|Exec|StartProcess)$
+          msg: "cli.process.1: start programs through the runner"
+        - pattern: ^runtime\.(GOOS|GOARCH)$
+          msg: "arch.ports.1, arch.ports.23: platform checks belong in the host layer"
+        - pattern: ^testing\.(T|B|F)\.(Skip|Skipf|SkipNow)$
+          msg: "tests.admission.5: a skip needs an allow-list entry and a reason"
+        - pattern: ^time\.Sleep$
+          msg: "tests.isolation.6: no sleep in a test; wait on a signal"
+        # arch.shared.8: the ban on each shared primitive's call outside its owner
+        # is rendered from the project's shared registry, never written here.
+        # slot shared-calls begin
+        # slot shared-calls end
+        # slot forbid-extra begin
+        # slot forbid-extra end
+        # per-project (cli.errors.2, cli.look.4, cli.look.5, cli.output.5): the
+        # shared UI module's literals and constructors, for example
+        #   ^ui\.(Ending|Refusal)$, ^lipgloss\.Style\.(Padding|Margin|Width)$,
+        #   flag definitions of the module's flag names.
+        # per-project (arch.ports.6, arch.shared.8, cli.config.2): sibling names,
+        #   shared exports and config decodes named in rule data.
+
+    gocognit:
+      min-complexity: 20 # code.size.3 (tests excluded below)
+
+    gocritic:
+      # code.comments.3: commentedOutCode only.
+      disable-all: true
+      enabled-checks:
+        - commentedOutCode
+
+    gocyclo:
+      min-complexity: 30 # code.idioms.4
+
+    gomoddirectives:
+      # go.layout.3: no replace lines at all.
+      replace-local: false
+      replace-allow-list: []
+
+    gosec:
+      # supply.scans.3: every rule runs, G201, G202, G204 and G404 among them, and no
+      # includes or excludes list narrows it; an exclusion below names its rule
+      # ids, its paths and its reason (internal/contexts_test.go holds the four).
+      config:
+        global:
+          # cli.process.1, gates.exemptions.1: a #nosec comment silences
+          # nothing; a suppression is a nolint with its reason, counted.
+          nosec: true
+
+    govet:
+      enable:
+        - waitgroup # go.concurrency.2 (on top of the default analyzers, code.format.2)
+
+    iface:
+      enable: # arch.ports.10
+        - identical
+        - unused
+        - opaque
+
+    interfacebloat:
+      max: 10 # go.style.1
+
+    nolintlint:
+      # gates.exemptions.1, gates.exemptions.2
+      allow-unused: false
+      require-explanation: true
+      require-specific: true
+
+    paralleltest:
+      # go.cycle.2, tests.runners.4: a test that runs alone is written
+      # //nolint:paralleltest // serial: <the process state it needs>; the
+      # project's suppression list holds the text, since nolintlint cannot.
+      ignore-missing: false
+      ignore-missing-subtests: false
+
+    revive:
+      rules:
+        - name: early-return # code.idioms.1
+        - name: indent-error-flow # code.idioms.1
+        - name: exported # code.naming.1 (stutter check on), code.comments.4
+        - name: var-naming # code.naming.1
+        - name: package-naming # arch.structure.7
+          arguments:
+            - check-extra-bad-name: true
+              user-defined-bad-names: [helpers, types, models, interfaces, base, other, misc]
+        - name: argument-limit # code.size.4
+          arguments: [6]
+        - name: deep-exit # go.errors.4
+        - name: datarace # go.concurrency.2
+        - name: waitgroup-by-value # go.concurrency.2
+        - name: forbidden-call-in-wg-go # go.concurrency.2
+
+    sloglint:
+      # go.logging.1, go.logging.2
+      no-global: all
+      static-msg: true
+      kv-only: true
+
+    thelper:
+      # go.style.5: a helper calls t.Helper first. Where the testing value sits
+      # in the parameters and what it is named are not the rule.
+      test: {begin: true, first: false, name: false}
+      benchmark: {begin: true, first: false, name: false}
+      tb: {begin: true, first: false, name: false}
+      fuzz: {begin: true, first: false, name: false}
+
+    staticcheck:
+      # code.format.2: all groups, the non-default ST checks off except
+      # ST1003, which code.naming.1 asks for. ST1005 stays on (go.errors.5 is
+      # not ruled yet; a project that keeps sentence-style errors excludes it).
+      checks:
+        - all
+        - -ST1000
+        - -ST1016
+        - -ST1020
+        - -ST1021
+        - -ST1022
+
+  exclusions:
+    # code.comments.4: no exclusion presets, so the comments preset stays off.
+    presets: []
+    # cli.process.1, gates.exemptions.1: a generated-file header silences no
+    # linter; golangci-lint v2 reads one loosely by default and drops the whole
+    # file. A suppression is a nolint with its reason, counted.
+    generated: disable
+    # Keep this list last in the file: a project's own exclusion rules are
+    # list items appended below its overrides line.
+    rules:
+      # slot exclusions-generated begin
+      # slot exclusions-generated end
+      # go.errors.1, code.idioms.3, code.size.3, code.duplication.1: non-test
+      # code only; a test's table of cases repeats by design.
+      - path: _test\.go$
+        linters: [dupl, errcheck, exhaustive, gocognit]
+      # supply.scans.3: a test reads and writes its own temp folders and testdata,
+      # builds its inputs from planted values, and plants credential-shaped strings
+      # that the secret scan reads with every file; G104 is errcheck's, as above.
+      - path: _test\.go$
+        linters: [gosec]
+        text: "G(101|104|115|122|301|302|304|306|703):"
+      # go.errors.3, go.errors.4: main and tests may panic and exit.
+      - path: (^|/)cmd/|_test\.go$
+        linters: [forbidigo]
+        text: "go\\.errors\\.[34]:"
+      # go.concurrency.1: a root context is made in main and in tests.
+      - path: (^|/)cmd/[^/]+/main\.go$|_test\.go$
+        linters: [forbidigo]
+        text: "go\\.concurrency\\.1:"
+      # cli.config.3: the config package and main read the environment; only
+      # the config package's own files, not a package below it.
+      # per-project: add the terminal module path.
+      - path: (^|/)cmd/[^/]+/main\.go$|(^|/)internal/config/[^/]+\.go$
+        linters: [forbidigo]
+        text: "cli\\.config\\.3:"
+      # cli.errors.3: main wires the process streams into run.
+      # per-project: add the terminal module path.
+      - path: (^|/)cmd/[^/]+/main\.go$
+        linters: [forbidigo]
+        text: "cli\\.errors\\.3:"
+      # cli.output.2: only the command path is checked: cmd/ and the command
+      # tree under internal/cli/.
+      # per-project: add the root command file.
+      - path-except: (^|/)cmd/|(^|/)internal/cli/
+        linters: [forbidigo]
+        text: "cli\\.output\\.2:"
+      # tests.admission.5, tests.isolation.6: test files only.
+      - path-except: _test\.go$
+        linters: [forbidigo]
+        text: "tests\\.(admission\\.5|isolation\\.6):"
+# slot overrides begin
+# slot overrides end
+      # go-console's own rows. Each says why it stands; a row that has no reason left is
+      # taken out, never renewed.
+      # ui and uitest are the shared terminal module: they write the process's streams, read
+      # the environment they are handed and, in tests, swap os.Stdout to read what a line prints.
+      - path: ^(ui|uitest)/
+        linters: [forbidigo]
+        text: "cli\\.(errors\\.3|config\\.3):"
+      # shell's one Windows test starts Windows PowerShell (and pwsh) to see what a program is given by a pasted line, in the
+      # environment it is handed; the shell package has no other test that starts a program.
+      - path: ^shell/powershell_windows_test\.go$
+        linters: [depguard]
+        text: "cli\\.process\\.1:"
+      - path: ^shell/powershell_windows_test\.go$
+        linters: [forbidigo]
+        text: "cli\\.config\\.3:"
+      # shell's other Windows test starts cmd.exe to read back the line Quote writes for the Cmd dialect, so the real
+      # command processor confirms the argv; like the PowerShell test it is the only start in the package.
+      - path: ^shell/cmd_windows_test\.go$
+        linters: [depguard]
+        text: "cli\\.process\\.1:"
+      # shell's Windows-dialect test starts cmd.exe, powershell and pwsh to read back the line Quote writes for Windows, and reads PATH
+      # to put the program it builds on it; like its two siblings it is a start the package has no other test for.
+      - path: ^shell/windows_windows_test\.go$
+        linters: [depguard]
+        text: "cli\\.process\\.1:"
+      - path: ^shell/windows_windows_test\.go$
+        linters: [forbidigo]
+        text: "cli\\.config\\.3:"
+      # tools/bestfit is a generator a person runs by hand on Windows to write shell's best-fit table:
+      # it is a main like those of cmd/, so it writes the process's streams and exits with a code.
+      - path: ^tools/bestfit/main\.go$
+        linters: [forbidigo]
+        text: "(cli\\.errors\\.3|go\\.errors\\.4):"
+      # internal/contract/removed is a main that task api runs with three file paths from the command line:
+      # it writes the process's stderr, exits with a code and reads the files it is given.
+      - path: ^internal/contract/removed/main\.go$
+        linters: [forbidigo]
+        text: "(cli\\.errors\\.3|go\\.errors\\.4):"
+      - path: ^internal/contract/removed/main\.go$
+        linters: [gosec]
+        text: "G703"
+      # tools/gate is what Taskfile.yml's shell was: a main a person or go-task runs from the module's root. It
+      # starts go, git and gofmt, which is its job, writes the process's streams, exits with a code, reads the environment
+      # and the kind of host to pick the row of budgets.yaml a tier is held to, and writes the files it is told to.
+      - path: ^tools/gate/main\.go$
+        linters: [depguard]
+        text: "cli\\.process\\.1:"
+      - path: ^tools/gate/main\.go$
+        linters: [forbidigo]
+        text: "(cli\\.errors\\.3|go\\.errors\\.4|cli\\.config\\.3|arch\\.ports\\.1, arch\\.ports\\.23|go\\.concurrency\\.1):"
+      - path: ^tools/gate/main\.go$
+        linters: [gosec]
+        text: "G703"
+      # A pager that fails is a test binary started again by its own path.
+      - path: ^ui/pager_test\.go$
+        linters: [revive, gosec]
+      # ui writes to a terminal it cannot ask again when a write fails: a failed write to a
+      # stream is no ending of the run.
+      - path: ^ui/[^/]+\.go$
+        linters: [errcheck]
+        text: "Error return value of `(fmt\\.Fprint(f|ln)?|io\\.WriteString)`"
+      # The old module's rows, moved with the code and not yet retired: a screen test runs a
+      # child or waits out a short time, and a form's builder is one long switch.
+      - path: _test\.go$
+        linters: [gosec]
+        text: "G204:"
+      - path: _test\.go$
+        linters: [forbidigo]
+        text: "tests\\.isolation\\.6:"
+      - path: ^ui/forms\.go$
+        linters: [gocognit]
+      - path: ^uitest/uitest\.go$
+        linters: [gochecknoglobals]
+      # The pty driver ends a child and a pty that may already be gone, and reads a stream whose end is the
+      # program's: no error of those is a result of a test.
+      - path: ^uitest/pty\.go$
+        linters: [errcheck]

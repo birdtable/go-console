@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "busy",
+  "what": "another run holds the lock",
+  "next": "app status",
+  "code": 3,
+  "changes": [],
+  "dry_run": true
+}

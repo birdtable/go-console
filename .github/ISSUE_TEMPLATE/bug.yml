@@ -1,0 +1,50 @@
+name: Bug
+description: Something in go-console does not do what its documentation says.
+labels: ["bug"]
+body:
+  - type: input
+    id: library-version
+    attributes:
+      label: Library version
+      description: The go-console version your go.mod pins, for example v0.1.1.
+    validations:
+      required: true
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version
+      description: The output of `go version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: system
+    attributes:
+      label: System
+      options:
+        - linux
+        - darwin
+        - windows
+        - freebsd
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: program
+    attributes:
+      label: The shortest program that shows it
+      description: A complete program that can be run as it is.
+      render: go
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true

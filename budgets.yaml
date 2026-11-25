@@ -1,0 +1,29 @@
+# Each tier's budget, in seconds, held over any ratio of the floor.
+# The floor is the least of three runs of the tier on a quiet host of the kind named below.
+# A tier that runs past its budget fails. On a long-run host (Linux or Windows, x86-64) the budget is the
+# one named for it; on another kind of host, and on a hosted runner (GITHUB_ACTIONS set), no budget is
+# known and none applies. The release run on a hosted runner is held by the 20-minute timeout of its job.
+# The Taskfile reads this file with awk, so the shape is narrow: a comment line, or a key, a colon and a number.
+# The pre-push tier is judged by pre-push-cpu, its CPU time, user plus system (hatch budget --cpu);
+# its wall row, pre-push-budget, is only hatch's hang guard: a push still running at ten times it is killed.
+# Pre-commit and release are judged by their wall budgets.
+# The three floors were measured in a fresh clone on a quiet laptop (Darwin-arm64, 15 CPUs), after one release run
+# to warm the cache: pre-commit 1, 0, 1; pre-push 8, 9, 10; release 9, 9, 10.
+# The CPU row is set for a push that carries a change, not one that only re-runs a warm cache. Measured on the
+# same laptop: three tier runs, each after go clean -testcache so no cached test result is read, the least of which is the floor:
+# pre-push CPU 111.3, 84.0, 92.0 s, at loads 10.8, 13.7 and 19.5 before the tier (an earlier three, each carrying a small ui
+# change, gave 109.3, 110.9, 113.6 s). A push that only re-runs a warm cache costs about 22 to 25 s. The row was the floor plus 46 s of room
+# (130); it does not exceed 150, the 10 s wall budget times the 15 CPUs. A push with a fully cold cache
+# (after a cache clear) that goes red is warmed once and retried, never waived.
+# The row is 150. The first run after a merge is cold, since the merge changes the test cache keys, and it was red on CPU
+# alone at 130 while the retry was green: 148.8 s then 91.4 s, and 144.0 s then 93.6 s.
+host: Darwin-arm64
+pre-commit-floor: 0
+pre-commit-budget: 2
+pre-push-floor: 8
+pre-push-budget: 10
+pre-push-cpu-floor: 84
+pre-push-cpu: 150
+release-floor: 9
+release-budget: 15
+release-budget-session: 60

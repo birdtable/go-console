@@ -1,0 +1,4 @@
+# The names of this module that are not experimental, one per line: the package directory, a space, the name.
+# Every exported name is experimental below v1 unless it is listed here (none is today). `task api` runs
+# `go doc ./<package> <name>` over each line: a name go doc does not find, or one whose doc says Experimental, is red.
+# measure's Column, RelativeLuminance and ContrastRatio are experimental too, as ui's names of the same are.

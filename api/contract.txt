@@ -1,0 +1,44 @@
+measure	TestContrastRatioRows	all	ContrastRatio answers the WCAG ratio of two colours, from 1 for a colour against itself to 21 for black on white.
+shell	TestQuoteCmdIsReadBackByCmdExe	windows	A line Quote writes for Cmd, run by cmd.exe itself, gives a native program the argv that was quoted.
+shell	TestQuotePowerShellGivesAProgramTheArgv	windows	A line Quote writes for PowerShell, run by Windows PowerShell 5.1, gives a native program the argv that was quoted.
+shell	TestQuoteRefusesEveryControlAndFormatRune	all	Quote refuses every control and format rune but NUL, LF and CR, which keep their own errors, in all three dialects, with ErrControl.
+shell	TestQuoteRefusesEveryRuneOfTheBestFitTable	all	Quote refuses in Cmd and PowerShell every rune that Windows best-fit turns into a quote, a backslash, a space or a tab, with ErrBestFit, and POSIX passes it.
+shell	TestQuoteWindowsIsOneLineForBothShells	all	Quote in Windows writes one line for a path holding ; & or |, a plain word bare and any other in double quotes with nothing escaped, and never joins two commands.
+shell	TestQuoteWindowsLineIsReadBackByCmdAndPowerShell	windows	A line Quote writes for Windows, run by cmd.exe, by Windows PowerShell 5.1 and by pwsh 7 in Legacy and Standard mode, gives a native program the argv that was quoted.
+shell	TestQuoteWindowsRefusesWhatNoOneLineServes	all	Quote in Windows keeps every refusal of Cmd and PowerShell and refuses with ErrWindows a $ or a backtick, a quoted word that ends in a backslash and a first word that is not plain.
+shell	TestShownAndInvisibleNameTheRuneClasses	all	Shown and Invisible hold for every rune class Quote refuses with ErrControl: controls, format, separators, spaces, blanks, unassigned, and a mark or Hangul jamo at the start of an argument or after a space.
+shell	TestShownIsWhatQuoteAnswersWithErrControlForEveryRune	all	For every rune alone, in a word, at the start and after a space, Shown is what Quote does not answer with ErrControl, in all three dialects.
+shell	TestShownSaysNothingOfTheOtherRefusals	all	Shown is true for a text that Quote refuses for another cause (a double quote, a percent, best-fit, a trailing backslash) and false for one that also holds a hidden rune.
+shell	TestSplitReadsNoCmdAndNoOtherDialect	all	Split answers ErrDialect for Cmd and for a value that is no dialect.
+shell	TestSplitReadsWhatQuoteWrote	all	Split gives back the argv Quote wrote, in POSIX, PowerShell and Windows, for plain, spaced, quoted, empty and quote-holding words.
+shell	TestSplitRefusesWhatQuoteNeverWrites	all	Split refuses with ErrNotQuoted, naming the byte offset, an unclosed quote, an operator, a dollar, a backtick, a glob, a comment, a backslash form, a bare word Quote would quote and a word Quote refuses, per dialect.
+ui	TestANameHidesWhatShellInvisibleHidesAndNothingElse	all	Name and a followed line hide a rune exactly when shell.Invisible says it is invisible, for every rune in a plain text: an unassigned rune, a space that is not U+0020 and a blank-drawing rune are quoted.
+ui	TestASecondSignalNeitherEndsTheProcessNorChangesTheCause	linux,darwin	A second signal, while the command the first one stopped still runs, does not end the process and does not change what Stopped answers.
+ui	TestAddFlagsGivesATreeTheSharedFlagsBeforeExecute	all	After Session.AddFlags, once or twice, a parse of the tree before Execute sets the session, and Execute on that tree runs with no refusal and one flag of each name.
+ui	TestAnErrorHandlerThatHandlesGivesTheCodeAndNoEnding	all	A WithErrorHandler that answers handled gives Main its exit code, held to 0..255, and ui paints no ending.
+ui	TestContrastRatioRows	all	ContrastRatio answers the WCAG ratio of two colours, from 1 for a colour against itself to 21 for black on white.
+ui	TestCtrlBreakCancelsMainsContextAndEndsOnTheFailedEnding	windows	Ctrl+Break cancels the context Main gives its commands, and a command that returns it ends the run on the failed ending.
+ui	TestExecuteRefusesASharedNameOnPflagsGlobalSet	all	Execute refuses a flag of a shared name defined on pflag's global set, with AddFlags and without, keeps a global flag of another name, and runs a second time on the same tree with the same session.
+ui	TestExecuteStillRefusesAFlagThatIsNotTheSessionsOwn	all	Execute refuses a flag of a shared name that is the program's own, defined before AddFlags or after, on the root or below, and one that another session's AddFlags gave.
+ui	TestHelpWithTheKitsFlagsIsTheHelpWithTheProgramsOwn	all	Help of a program that names the shared flags is byte for byte the help of the same program registering those flags itself, with [--flags] only on a command that has a flag of its own.
+ui	TestHereDialectNamesTheShellOnWindows	windows	HereDialect names the shell the program was started from on Windows: cmd, PowerShell, or POSIX under bash.
+ui	TestHereDialectPassesOverItsOwnGroup	linux,darwin	HereDialect passes over a POSIX shell in the program's own process group, and answers ErrNoDialect for the shell behind it that it cannot quote for.
+ui	TestHereDialectReadsTheParentChainOffWindows	linux,darwin	HereDialect reads the parent chain and wraps ErrNoDialect for fish, csh and tcsh, so a line is never quoted for POSIX under them.
+ui	TestJSONEndingsOnStderrPrintsTheWordBesideTheDocument	all	With JSONEndingsOnStderr, under --json, End prints the closing word on stderr and stdout holds only the one document, with EndingsOnStdout and without; without it the word prints nowhere.
+ui	TestLinesDiscardEndsWithItsContextAndIsJoinedByTheNext	all	Lines.Discard ends with its context while its read goes on, and a later call joins that read and never starts a second.
+ui	TestMainCallsFinishOnceWithTheCodeItReturns	all	Main calls a WithFinish function once, last, with the code it returns, on every return.
+ui	TestMainCancelsTheCommandsContextOnInterruptAndStop	linux,darwin	Main cancels the context its command runs under on SIGINT and on SIGTERM, and the run ends with a non-zero code.
+ui	TestMainFuncHandsEveryArgumentToTheFunctionUnparsed	all	MainFunc hands the function every argument as typed, --help, -h and -- among them.
+ui	TestMainFuncKeepsTheCodeTheFunctionReturns	all	MainFunc ends a plain function on the code it returns (0, 3 or 130), under a context that has ended or one that has not.
+ui	TestNoHeaderRulePaintsATableWithNothingUnderItsHeader	all	With NoHeaderRule a painted table is the painted table without it less its one rule line, byte for byte, and without it the rule stays.
+ui	TestNoHelpLineLeavesALinelessEndingWithNoLine	all	With NoHelpLine a refusal or a failure that gives no line to type is printed and kept with none, and an ending that gives its own line keeps it; without it the line is the command's help.
+ui	TestShellQuotePOSIXIsReadBackBySh	linux,darwin	A line Quote writes for POSIX is read back by sh as the argv that was quoted.
+ui	TestSignalErrorIsCanceledAndStoppedReadsItFromAChild	all	A SignalError is context.Canceled to errors.Is and names its signal, and Stopped reads it from a context cancelled with one and from a child of it.
+ui	TestStoppedIsFalseWhenNoSignalEndedTheContext	all	Stopped is false while a command runs, after the run returned, on the caller's own cancel and on a passed deadline, and a run that returned leaves context.Canceled as the cause.
+ui	TestStoppedNamesCtrlBreakAndASecondOneChangesNothing	windows	Stopped answers true with os.Interrupt once Ctrl+Break has ended a running command's context, and a second Ctrl+Break neither ends the program nor changes the answer.
+ui	TestStoppedNamesTheSignalThatStoppedTheRun	linux,darwin	Stopped answers true with the signal, SIGINT or SIGTERM, once it has ended a running command's context, and the cause is a SignalError that is context.Canceled.
+ui	TestTheEmojiJoinerAndSelectorsAreTheOneExceptionToShellInvisible	all	The joiner between two pictures and the selectors an emoji or a keycap is drawn with stay in a name, and are quoted between letters.
+ui	TestTheSharedFlagCheckMergesNothingIntoACommand	all	After Execute with FlagNames a command that did not run holds no flag it did not define: the shared-flag check merges no parent's persistent flag into it.
+uitest	TestAFixedModelIsTheSameGoldenOnEverySystem	all	A model drawn at a fixed size is the same golden bytes through uitest.Golden on every system, which trims trailing spaces and newlines.
+uitest/golden	TestAGoldenFileIsTheBytesExactly	all	golden.File compares a file's bytes exactly and names the file and the line that differs.
+uitest/golden	TestAGoldenFileTranslatesNoLineEnds	all	golden.File translates no line ends, so one file is the same bytes on every system.

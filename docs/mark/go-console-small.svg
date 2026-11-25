@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="t d">
+  <title id="t">go-console</title>
+  <desc id="d">A terminal, its cursor in coral. Drawn larger, for small sizes.</desc>
+  <rect width="256" height="256" rx="56" fill="#22264A"/><g transform="translate(128 128) scale(1.75) translate(-184 -155)"><rect x="150" y="120" width="68" height="70" rx="12" fill="none" stroke="#FFF6EC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M165 142 L179 155 L165 168" fill="none" stroke="#FFF6EC" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M187 170 H204" fill="none" stroke="#E8735A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

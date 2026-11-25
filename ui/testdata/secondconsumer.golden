@@ -1,0 +1,17 @@
+## a run: other look
+  two things
+  name  state
+a     up
+b     down
+
+  finished   looked at 2 things
+
+## a change: other put a b
+  would thing      to shelf
+
+  finished   put one thing
+
+## a flag it does not name: other look --json
+
+  turned away unknown flag: --json
+    other look --help

@@ -1,0 +1,2 @@
+# The differences between the exported surfaces of linux, darwin and windows that are expected, in the lines
+# `task api` prints for them: "<system> vs linux: - ./pkg.Name: added". Empty today: the three surfaces are one.

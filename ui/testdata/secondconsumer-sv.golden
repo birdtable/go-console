@@ -1,0 +1,143 @@
+## other --help
+
+  ett andra program
+
+  USAGE
+
+
+    other [command] [--flags]
+
+
+  COMMANDS
+
+    completion [command]  Generate the autocompletion script for the specified shell
+    drop                  Släpp något
+    help [kommando]       Hjälp om vilket kommando som helst
+    put                   Lägg något
+    wipe                  Radera
+
+  FLAGS
+
+    --bare                Ingen levande vy eller bläddrare, och frågor som vanliga rader
+    -h --help             Hjälp för other
+    --ja                  Svara ja på varje fråga före en ändring
+    --machine             Ett JSON-dokument på stdout, resten på stderr
+    -v --version          Version for other
+
+
+## other put
+  skulle sak        till hylla
+
+  finished   la en sak
+
+## other drop
+
+  turned away detta skulle släppa allt, och här finns ingen terminal att fråga i
+    other drop --ja
+
+## other drop --ja
+Släppa allt? ja, genom --ja
+
+  finished   klart
+
+## other wipe
+
+  turned away detta skulle radera hyllan, och här finns ingen terminal att fråga i
+    other wipe --bekräfta hylla
+
+## other put --help
+
+  lägg något
+
+  USAGE
+
+
+    other put [--flags]
+
+
+  FLAGS
+
+    --bare     Ingen levande vy eller bläddrare, och frågor som vanliga rader
+    -h --help  Hjälp för put
+    --ja       Svara ja på varje fråga före en ändring
+    --machine  Ett JSON-dokument på stdout, resten på stderr
+
+
+## other help
+
+  ett andra program
+
+  USAGE
+
+
+    other [command] [--flags]
+
+
+  COMMANDS
+
+    completion [command]       Generate the autocompletion script for the specified shell
+    drop                       Släpp något
+    help [kommando] [--flags]  Hjälp om vilket kommando som helst
+    put                        Lägg något
+    wipe                       Radera
+
+  FLAGS
+
+    --bare                     Ingen levande vy eller bläddrare, och frågor som vanliga rader
+    -h --help                  Hjälp för other
+    --ja                       Svara ja på varje fråga före en ändring
+    --machine                  Ett JSON-dokument på stdout, resten på stderr
+
+
+## other help nope
+Okänt hjälpämne [`nope`]
+Usage:
+  other [flags]
+  other [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  drop        släpp något
+  help        Hjälp om vilket kommando som helst
+  put         lägg något
+  wipe        radera
+
+Flags:
+      --bare      ingen levande vy eller bläddrare, och frågor som vanliga rader
+      --ja        svara ja på varje fråga före en ändring
+      --machine   ett JSON-dokument på stdout, resten på stderr
+
+Use "other [command] --help" for more information about a command.
+
+## live e
+id   läge
+ac11 igång
+  läst 12:00:00
+
+  vald ac11
+  tillbaka från ac11: slutade med 2
+  ↑/↓ välj · e gå in · x ta bort · q lämna
+## live x escape
+id   läge
+ac11 igång
+  läst 12:00:00
+
+  vald ac11
+  skriv ac11 för att ta bort det: escape
+  ↑/↓ välj · e gå in · x ta bort · q lämna
+## live x q enter
+id   läge
+ac11 igång
+  läst 12:00:00
+
+  vald ac11
+  det är inte namnet, så ingenting ändrades
+  ↑/↓ välj · e gå in · x ta bort · q lämna
+## live failed read
+id   läge
+ac11 igång
+  läst 12:00:00
+
+  vald ac11
+  det är inte namnet, så ingenting ändrades
+  ↑/↓ välj · e gå in · x ta bort · q lämna

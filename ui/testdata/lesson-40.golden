@@ -1,0 +1,43 @@
+Clearing the caches
+Old caches take room and keep nothing
+you need.
+
+Command
+  app clean
+
+What it is
+  A cache is a copy kept so a second
+  read is quick; it can always be made
+  again.
+
+Found on this machine
+  - 3 caches, 2.1 GB
+  - the oldest is from March
+
+Why it matters
+  A full disk stops builds, and the
+  caches are the part that is safe to
+  give back.
+
+What the change does
+  Removes the cache folders it lists,
+  and nothing else.
+
+What it does not do
+  Touch a project, a setting or anything
+  outside the cache folders.
+
+How to undo it
+  There is nothing to undo; the next
+  build makes the caches again, slower
+  once.
+
+How to check it
+  Run app clean again: it finds nothing
+  to remove.
+
+In this program's documents
+  - docs/caches.md
+
+Outside sources
+  - https://example.test/caches

@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "command": "app",
+  "word": "not ready",
+  "what": "no config yet",
+  "next": "app init",
+  "code": 4,
+  "changes": [],
+  "dry_run": true
+}

@@ -1,0 +1,9 @@
+  right     disk
+            41 GB free on /var
+  undecided clock
+            the time server did not answer, so the drift is not known
+  wrong     service
+            the unit is stopped
+            fix:
+              sudo systemctl start app
+              sudo systemctl status app

@@ -1,0 +1,28 @@
+
+  does a thing for the folder it is run in, and says what it changed
+
+  USAGE
+
+
+    app [command] [--flags]
+
+
+  COMMANDS
+
+    completion [command]  Generate the autocompletion script for the specified
+                          shell
+    help [command]        Help about any command
+
+  FLAGS
+
+    --accessible          Questions asked as plain lines for a screen reader
+    --folder              The folder to work in, when it is not the one the run
+                          starts in
+    -h --help             Help for app
+    --json                One JSON document on stdout, the rest on stderr
+    --loud                Make noise about every file the run reads or writes,
+                          one line each
+    --no-color            No colour, as NO_COLOR asks
+    --plain               No live view or pager, and questions as plain lines
+    -v --version          Version for app
+    --yes                 Answer yes to every question before a change

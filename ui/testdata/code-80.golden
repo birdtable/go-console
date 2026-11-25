@@ -1,0 +1,4 @@
+ Host box
+   HostName 192.0.2.7
+   User you
+   IdentityFile ~/.ssh/example
