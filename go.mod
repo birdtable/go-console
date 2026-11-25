@@ -11,7 +11,7 @@ require (
 	charm.land/huh/v2 v2.0.3
 	charm.land/lipgloss/v2 v2.1.0
 	charm.land/log/v2 v2.0.1
-	github.com/birdtable/go-run v0.5.0
+	github.com/birdtable/go-run v0.9.1
 	github.com/birdtable/go-testkit v0.3.1
 	github.com/birdtable/go-testkit/taskfile v0.1.1
 	github.com/charmbracelet/colorprofile v0.4.3
@@ -52,8 +52,8 @@ require (
 	github.com/xo/terminfo v1.0.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.6 // indirect
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/sync v0.25.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 	mvdan.cc/sh/v3 v3.14.1 // indirect
 )
 
