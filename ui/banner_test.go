@@ -300,7 +300,7 @@ func TestTheGapDefaultsToOne(t *testing.T) {
 // banner it drew before, cell for cell, and in the roles it drew it in. The
 // expected pictures are written out, not read from the font, so a glyph that
 // drifts fails here. The letters are given one by one so no Go file spells a
-// program's name (design 001, rule 1); the taglines are theirs.
+// program's name; the taglines are theirs.
 func TestEachProgramsBannerIsWhatItWas(t *testing.T) {
 	t.Parallel()
 	scr := screenOpt(true, 0)
