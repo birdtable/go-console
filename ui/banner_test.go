@@ -296,63 +296,89 @@ func TestTheGapDefaultsToOne(t *testing.T) {
 	}
 }
 
-// The three programs the module was made from, as Brands: each draws the
-// banner it drew before, cell for cell, and in the roles it drew it in. The
-// expected pictures are written out, not read from the font, so a glyph that
-// drifts fails here. The letters are given one by one so no Go file spells a
-// program's name; the taglines are theirs.
-func TestEachProgramsBannerIsWhatItWas(t *testing.T) {
+// Sample brands, made up for this test, each drawing its banner cell for
+// cell and in the roles its mark is given. The expected pictures are written
+// out, not read from the font, so a glyph that drifts fails here. The last
+// three cases spell the whole alphabet and the digits, so every glyph is held
+// to its picture.
+func TestSampleBrandsDrawTheBannersWrittenOut(t *testing.T) {
 	t.Parallel()
 	scr := screenOpt(true, 0)
-	word := func(letters ...rune) string { return string(letters) }
 	for _, tc := range []struct {
 		brand    Brand
 		version  string
 		wantRows [2]string
-		dimMark  func() string // the mark's first row, painted
+		dimMark  func() string // the mark's first row, painted; nil for no mark
 	}{
 		{
-			brand: Brand{Name: word('h', 'u', 'g', 'i', 'n'), Mark: "◖  ▄██▄\n ▀▀███▌", MarkNote: "◖", MarkGap: 3,
-				Row: "a home server that sleeps"},
+			brand: Brand{Name: "wombat", Mark: "◖  ▄▄▄▄\n ▀▀██▀▌", MarkNote: "◖", MarkGap: 3,
+				Row: "a notes app that syncs"},
 			version: "v1",
 			wantRows: [2]string{
-				"◖  ▄██▄   █ █ █ █ █▀▀ ▀█▀ █▄ █   a home server that sleeps",
-				" ▀▀███▌   █▀█ █▄█ █▄█ ▄█▄ █ ▀█   v1",
+				"◖  ▄▄▄▄   █ █ █ █▀█ █▀▄▀█ █▄▄ ▄▀█ ▀█▀   a notes app that syncs",
+				" ▀▀██▀▌   ▀▄▀▄▀ █▄█ █ ▀ █ █▄█ █▀█  █    v1",
 			},
-			dimMark: func() string { return New(scr).Note("◖") + New(scr).Action("  ▄██▄") },
+			dimMark: func() string { return New(scr).Note("◖") + New(scr).Action("  ▄▄▄▄") },
 		},
 		{
-			brand: Brand{Name: word('h', 'e', 'i', 'm', 'r'), Mark: "◖ ▐▀▀▌\n  ▐  ▌", MarkNote: "◖",
-				Beside: func(v string) [2]string { return [2]string{"box  " + v, "the page for a box"} }},
+			brand: Brand{Name: "kettle", Mark: "◖ ▐▀▀▌\n  ▐  ▌", MarkNote: "◖",
+				Beside: func(v string) [2]string { return [2]string{"tool  " + v, "the page for a tool"} }},
 			version: "v1",
 			wantRows: [2]string{
-				"◖ ▐▀▀▌ █ █ █▀▀ ▀█▀ █▀▄▀█ █▀█   box  v1",
-				"  ▐  ▌ █▀█ ██▄ ▄█▄ █ ▀ █ █▀▄   the page for a box",
+				"◖ ▐▀▀▌ █▄▀ █▀▀ ▀█▀ ▀█▀ █   █▀▀   tool  v1",
+				"  ▐  ▌ █ █ ██▄  █   █  █▄▄ ██▄   the page for a tool",
 			},
 			dimMark: func() string { return New(scr).Note("◖") + New(scr).Action(" ▐▀▀▌") },
 		},
 		{
-			brand: Brand{Name: word('f', 'l', 'e', 'd', 'g', 'e'), Mark: "  ▄█•█▄▖\n  ▀██▀▁▁", MarkNote: "▁", MarkInk: "•", MarkGap: 2,
-				Row: "agents that sleep until sent"},
+			brand: Brand{Name: "orchard", Mark: "  ▄█•█▄▖\n  ▀██▀▁▁", MarkNote: "▁", MarkInk: "•", MarkGap: 2,
+				Row: "tasks that wait until run"},
 			version: "v1",
 			wantRows: [2]string{
-				"  ▄█•█▄▖  █▀▀ █   █▀▀ █▀▄ █▀▀ █▀▀   agents that sleep until sent",
-				"  ▀██▀▁▁  █▀  █▄▄ ██▄ █▄▀ █▄█ ██▄   v1",
+				"  ▄█•█▄▖  █▀█ █▀█ █▀▀ █ █ ▄▀█ █▀█ █▀▄   tasks that wait until run",
+				"  ▀██▀▁▁  █▄█ █▀▄ █▄▄ █▀█ █▀█ █▀▄ █▄▀   v1",
 			},
 			dimMark: func() string { return New(scr).Action("  ▄█") + "•" + New(scr).Action("█▄▖") },
+		},
+		{
+			brand:   Brand{Name: "abcdefghijklm", Row: "the first half"},
+			version: "v1",
+			wantRows: [2]string{
+				"▄▀█ █▄▄ █▀▀ █▀▄ █▀▀ █▀▀ █▀▀ █ █ ▀█▀   █ █▄▀ █   █▀▄▀█   the first half",
+				"█▀█ █▄█ █▄▄ █▄▀ ██▄ █▀  █▄█ █▀█ ▄█▄ █▄█ █ █ █▄▄ █ ▀ █   v1",
+			},
+		},
+		{
+			brand:   Brand{Name: "nopqrstuvwxyz", Row: "the second half"},
+			version: "v1",
+			wantRows: [2]string{
+				"█▄ █ █▀█ █▀█ █▀█ █▀█ ▄▀▀ ▀█▀ █ █ █ █ █ █ █ ▀▄▀ █ █ ▀▀█   the second half",
+				"█ ▀█ █▄█ █▀▀ ▀▀▄ █▀▄ ▄▄▀  █  █▄█ ▀▄▀ ▀▄▀▄▀ █ █  █  █▄▄   v1",
+			},
+		},
+		{
+			brand:   Brand{Name: "0123456789", Row: "the digits"},
+			version: "v1",
+			wantRows: [2]string{
+				"█▀█ ▄█  ▀▀▄ ▀▀█ █ █ █▀▀ █▀  ▀▀█ ▄▀▄ █▀█   the digits",
+				"▀▄▀  █  █▄▄ ▄▄█ ▀▀█ ▄▄█ █▄█   █ ▀▄▀ ▀▀█   v1",
+			},
 		},
 	} {
 		rows := strings.Split(banner(New(scr).outStream(), tc.brand, tc.version), "\n")
 		if len(rows) != 2 {
-			t.Fatalf("%d rows", len(rows))
+			t.Fatalf("%s: %d rows", tc.brand.Name, len(rows))
 		}
 		for i, row := range rows {
 			if got := ansi.Strip(row); got != tc.wantRows[i] {
-				t.Errorf("row %d:\n got %q\nwant %q", i, got, tc.wantRows[i])
+				t.Errorf("%s row %d:\n got %q\nwant %q", tc.brand.Name, i, got, tc.wantRows[i])
 			}
 		}
+		if tc.dimMark == nil {
+			continue
+		}
 		if want := tc.dimMark(); !strings.HasPrefix(rows[0], want) {
-			t.Errorf("the mark's roles: %q does not start with %q", rows[0], want)
+			t.Errorf("%s: the mark's roles: %q does not start with %q", tc.brand.Name, rows[0], want)
 		}
 	}
 }
