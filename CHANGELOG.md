@@ -2,6 +2,11 @@
 
 What each release of go-console changed.
 
+## v0.18.1 (2026-11-26)
+
+### Changed
+- Tests: the banner test draws neutral sample names and marks.
+
 ## v0.18.0 (2026-11-25)
 
 First public release.
