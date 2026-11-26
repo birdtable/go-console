@@ -52,7 +52,8 @@ func (s *Session) pagerFor(ctx context.Context) *exec.Cmd {
 
 // pagerProgram is the program a pager command starts and its arguments, or ""
 // for none. The one place the choice is made, so the program that is run is
-// always a function of this package (design 001, the replaceability rule).
+// always a function of this package, so it can be replaced without touching
+// the callers.
 func pagerProgram(argv []string) (program string, args []string) {
 	if len(argv) == 0 {
 		return "", nil
