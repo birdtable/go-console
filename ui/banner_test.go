@@ -18,7 +18,7 @@ import (
 
 // testBrand is a made-up program: a name, a two-row mark, a tagline.
 func testBrand() Brand {
-	return Brand{Name: "app", Mark: "◖  ▄██▄\n ▀▀███▌", MarkGap: 3, Row: "a made-up tagline"}
+	return Brand{Name: "app", Mark: "◗  ▄▀▀▄\n ▐▄▄▄▄▌", MarkGap: 3, Row: "a made-up tagline"}
 }
 
 // Arriving says where you have arrived. This is the whole point, and it did not
@@ -231,7 +231,7 @@ func TestTheMarkGoesBeforeTheName(t *testing.T) { //nolint:paralleltest // seria
 		if got := strings.Contains(out, "a made-up tagline"); got != tc.name {
 			t.Errorf("width %d: name drawn %v, want %v:\n%s", tc.width, got, tc.name, out)
 		}
-		if got := strings.Contains(out, "▀▀███▌"); got != tc.mark {
+		if got := strings.Contains(out, "▐▄▄▄▄▌"); got != tc.mark {
 			t.Errorf("width %d: mark drawn %v, want %v:\n%s", tc.width, got, tc.mark, out)
 		}
 	}
@@ -243,18 +243,18 @@ func TestTheMarkGoesBeforeTheName(t *testing.T) { //nolint:paralleltest // seria
 func TestAMarkKeepsItsDimRunes(t *testing.T) {
 	t.Parallel()
 	scr := screenOpt(true, 0)
-	moon := Brand{Name: "app", Mark: "◖  ▄██▄\n ▀▀███▌", MarkGap: 3, MarkNote: "◖", Row: "a made-up tagline"}
+	moon := Brand{Name: "app", Mark: "◗  ▄▀▀▄\n ▐▄▄▄▄▌", MarkGap: 3, MarkNote: "◗", Row: "a made-up tagline"}
 	rows := strings.Split(bannerOf(New(scr), moon), "\n")
 	if len(rows) != 2 {
 		t.Fatalf("the banner is %d rows", len(rows))
 	}
-	if want := New(scr).Note("◖") + New(scr).Action("  ▄██▄"); !strings.HasPrefix(rows[0], want) {
+	if want := New(scr).Note("◗") + New(scr).Action("  ▄▀▀▄"); !strings.HasPrefix(rows[0], want) {
 		t.Errorf("the top row does not start with a dim moon and an action body:\n%q\nwant prefix %q", rows[0], want)
 	}
 	// The negative half: with no MarkNote the same mark has no dim run.
 	flat := moon
 	flat.MarkNote = ""
-	if want := New(scr).Note("◖"); strings.HasPrefix(bannerOf(New(scr), flat), want) {
+	if want := New(scr).Note("◗"); strings.HasPrefix(bannerOf(New(scr), flat), want) {
 		t.Errorf("a mark with no MarkNote still drew a dim moon: %q", bannerOf(New(scr), flat))
 	}
 }
@@ -311,34 +311,34 @@ func TestSampleBrandsDrawTheBannersWrittenOut(t *testing.T) {
 		dimMark  func() string // the mark's first row, painted; nil for no mark
 	}{
 		{
-			brand: Brand{Name: "wombat", Mark: "◖  ▄▄▄▄\n ▀▀██▀▌", MarkNote: "◖", MarkGap: 3,
-				Row: "a notes app that syncs"},
+			brand: Brand{Name: "wombat", Mark: "◑  ▙▄▟\n ▝▀▀▀▘", MarkNote: "◑", MarkGap: 3,
+				Row: "counts the words in a file"},
 			version: "v1",
 			wantRows: [2]string{
-				"◖  ▄▄▄▄   █ █ █ █▀█ █▀▄▀█ █▄▄ ▄▀█ ▀█▀   a notes app that syncs",
-				" ▀▀██▀▌   ▀▄▀▄▀ █▄█ █ ▀ █ █▄█ █▀█  █    v1",
+				"◑  ▙▄▟   █ █ █ █▀█ █▀▄▀█ █▄▄ ▄▀█ ▀█▀   counts the words in a file",
+				" ▝▀▀▀▘   ▀▄▀▄▀ █▄█ █ ▀ █ █▄█ █▀█  █    v1",
 			},
-			dimMark: func() string { return New(scr).Note("◖") + New(scr).Action("  ▄▄▄▄") },
+			dimMark: func() string { return New(scr).Note("◑") + New(scr).Action("  ▙▄▟") },
 		},
 		{
-			brand: Brand{Name: "kettle", Mark: "◖ ▐▀▀▌\n  ▐  ▌", MarkNote: "◖",
-				Beside: func(v string) [2]string { return [2]string{"tool  " + v, "the page for a tool"} }},
+			brand: Brand{Name: "kettle", Mark: "◒ ▟▀▙\n  ▜▄▛", MarkNote: "◒",
+				Beside: func(v string) [2]string { return [2]string{"demo  " + v, "prints a short forecast"} }},
 			version: "v1",
 			wantRows: [2]string{
-				"◖ ▐▀▀▌ █▄▀ █▀▀ ▀█▀ ▀█▀ █   █▀▀   tool  v1",
-				"  ▐  ▌ █ █ ██▄  █   █  █▄▄ ██▄   the page for a tool",
+				"◒ ▟▀▙ █▄▀ █▀▀ ▀█▀ ▀█▀ █   █▀▀   demo  v1",
+				"  ▜▄▛ █ █ ██▄  █   █  █▄▄ ██▄   prints a short forecast",
 			},
-			dimMark: func() string { return New(scr).Note("◖") + New(scr).Action(" ▐▀▀▌") },
+			dimMark: func() string { return New(scr).Note("◒") + New(scr).Action(" ▟▀▙") },
 		},
 		{
-			brand: Brand{Name: "orchard", Mark: "  ▄█•█▄▖\n  ▀██▀▁▁", MarkNote: "▁", MarkInk: "•", MarkGap: 2,
-				Row: "tasks that wait until run"},
+			brand: Brand{Name: "orchard", Mark: "  ▗▟•▙▖\n  ▝▀▀▀▘", MarkNote: "▘", MarkInk: "•", MarkGap: 2,
+				Row: "turns csv files into tables"},
 			version: "v1",
 			wantRows: [2]string{
-				"  ▄█•█▄▖  █▀█ █▀█ █▀▀ █ █ ▄▀█ █▀█ █▀▄   tasks that wait until run",
-				"  ▀██▀▁▁  █▄█ █▀▄ █▄▄ █▀█ █▀█ █▀▄ █▄▀   v1",
+				"  ▗▟•▙▖  █▀█ █▀█ █▀▀ █ █ ▄▀█ █▀█ █▀▄   turns csv files into tables",
+				"  ▝▀▀▀▘  █▄█ █▀▄ █▄▄ █▀█ █▀█ █▀▄ █▄▀   v1",
 			},
-			dimMark: func() string { return New(scr).Action("  ▄█") + "•" + New(scr).Action("█▄▖") },
+			dimMark: func() string { return New(scr).Action("  ▗▟") + "•" + New(scr).Action("▙▖") },
 		},
 		{
 			brand:   Brand{Name: "abcdefghijklm", Row: "the first half"},

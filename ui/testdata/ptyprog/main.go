@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	brand := ui.Brand{Name: "tool", Mark: "◖  ▄██▄\n ▀▀███▌", MarkGap: 3, Row: "a made-up tagline"}
+	brand := ui.Brand{Name: "tool", Mark: "◗  ▄▀▀▄\n ▐▄▄▄▄▌", MarkGap: 3, Row: "a made-up tagline"}
 	table, err := exit.New(
 		exit.Kind{Name: "done", Word: "done", Code: 0},
 		exit.Kind{Name: "failed", Word: "failed", Code: 1},
